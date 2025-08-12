@@ -7,7 +7,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <Providers>
-          <Navbar />
+          <Navbar /> {/* ✅ Navbar on all pages */}
           <main className="min-h-screen bg-gray-50">{children}</main>
         </Providers>
       </body>

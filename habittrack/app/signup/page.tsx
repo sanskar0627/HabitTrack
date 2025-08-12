@@ -2,6 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+function validateEmail(email: string) {
+  // Gmail only
+  const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+  return gmailRegex.test(email);
+}
+
+function validatePassword(password: string) {
+  return password.length >= 6;
+}
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -12,6 +23,17 @@ export default function SignUpPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    // Client-side validation
+    if (!validateEmail(form.email)) {
+      setError("Please enter a valid Email address.");
+      return;
+    }
+    if (!validatePassword(form.password)) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -24,66 +46,91 @@ export default function SignUpPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Something went wrong");
+        setError(data.error || "Something went wrong.");
       } else {
-        alert("Account created! Please log in.");
-        router.push("/login");
+        // Success message inline, then redirect
+        setError("Account created! Please log in.");
+        setTimeout(() => router.push("/login"), 1000);
       }
     } catch {
-      setError("Network error");
+      setError("Network error. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
   const updateField = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setError("");
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h1 className="text-xl font-bold mb-4">Sign Up</h1>
-      {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+    <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-indigo-50 to-indigo-100 px-4">
+      <div className="max-w-md w-full mx-auto bg-white rounded-2xl shadow-xl p-8">
+        <h1 className="text-3xl font-bold text-indigo-700 mb-2 text-center">Create Your Account</h1>
+        <p className="text-gray-600 text-center mb-6">Join HabitTracker and start building better habits!</p>
 
-      <form onSubmit={onSubmit} className="space-y-3">
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={form.name}
-          onChange={updateField}
-          className="w-full p-2 border rounded"
-          required
-        />
+        {error && (
+          <div className="text-center my-3">
+            <p className={`text-sm ${error.startsWith("Account created") ? "text-green-600" : "text-red-600"}`}>
+              {error}
+            </p>
+          </div>
+        )}
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={updateField}
-          className="w-full p-2 border rounded"
-          required
-        />
+        <form onSubmit={onSubmit} className="space-y-5">
+          <input
+            type="text"
+            name="name"
+            autoComplete="name"
+            placeholder="Full Name"
+            value={form.name}
+            onChange={updateField}
+            className="w-full px-4 py-2 rounded-md border border-indigo-200 shadow-inner focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            required
+          />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={updateField}
-          className="w-full p-2 border rounded"
-          required
-        />
+          <input
+            type="email"
+            name="email"
+            autoComplete="email"
+            placeholder="Email address"
+            value={form.email}
+            onChange={updateField}
+            className="w-full px-4 py-2 rounded-md border border-indigo-200 shadow-inner focus:outline-none focus:ring-2 focus:ring-purple-400"
+            required
+          />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-        >
-          {loading ? "Signing up..." : "Sign Up"}
-        </button>
-      </form>
+          <input
+            type="password"
+            name="password"
+            autoComplete="new-password"
+            placeholder="Password (min. 6 characters)"
+            value={form.password}
+            onChange={updateField}
+            className="w-full px-4 py-2 rounded-md border border-indigo-200 shadow-inner focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            required
+          />
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-md bg-purple-500 text-white text-lg font-semibold shadow-md hover:bg-purple-700 transition focus:ring-2 focus:ring-purple-400"
+          >
+            {loading ? "Signing up..." : "Sign Up"}
+          </button>
+        </form>
+
+        {/* Links */}
+        <div className="flex flex-col md:flex-row items-center justify-between mt-6 gap-2">
+          <Link href="/login" className="text-indigo-700 hover:underline text-sm">
+            Already have an account? Sign In
+          </Link>
+          <Link href="/forgot-password" className="text-purple-700 hover:underline text-sm">
+            Forgot Password?
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
