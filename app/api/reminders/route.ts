@@ -15,6 +15,12 @@ async function sendEmail(to: string, subject: string, text: string) {
 }
 
 export async function GET(req: NextRequest) {
+  // Check Authorization header for CRON_SECRET
+  const authHeader = req.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const now = new Date();
     const currentTime = now.toTimeString().slice(0, 5); // HH:mm
