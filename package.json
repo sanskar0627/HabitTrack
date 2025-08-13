@@ -28,7 +28,6 @@
     "@types/bcrypt": "^6.0.0",
     "@types/dotenv": "^6.1.1",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/next-auth": "^3.13.0",
     "@types/node": "^20.19.10",
     "@types/react": "^19",
     "@types/react-dom": "^19",
