@@ -14,14 +14,16 @@ async function getUserHabits(userId: number) {
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params; // ✅ await the params
+  const habitId = Number(id);
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const habitId = Number(params.id);
   if (isNaN(habitId)) {
     return NextResponse.json({ error: "Invalid habit ID" }, { status: 400 });
   }
@@ -73,14 +75,16 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params; // ✅ await the params
+  const habitId = Number(id);
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const habitId = Number(params.id);
   if (isNaN(habitId)) {
     return NextResponse.json({ error: "Invalid habit ID" }, { status: 400 });
   }
