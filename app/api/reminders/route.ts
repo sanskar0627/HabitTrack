@@ -13,13 +13,14 @@ async function sendEmail(to: string, subject: string, text: string) {
     text,
   });
 }
-
 export async function GET(req: NextRequest) {
-  // Check Authorization header for CRON_SECRET
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const url = new URL(req.url);
+  const secret = url.searchParams.get('secret');
+
+  if (secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
 
   try {
     const now = new Date();

@@ -1,11 +1,8 @@
 {
   "crons": [
     {
-      "path": "/api/reminders",
-      "schedule": "0 9 * * *",
-      "headers": {
-        "Authorization": "Bearer hbdfeofdhoicgifchiohochohfowhoogiofbkuiofgihvfiiouhgvfiohiougvighigviugikvdiugouas"
-      }
+      "path": "/api/reminders?secret=YOUR_CRON_SECRET",
+      "schedule": "0 9 * * *"
     }
   ]
 }
