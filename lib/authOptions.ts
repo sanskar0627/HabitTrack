@@ -15,30 +15,17 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        const user = await prisma.user.findUnique({ where: { email: credentials.email } });
         if (!user) return null;
 
-        const valid = await bcrypt.compare(
-          credentials.password,
-          user.passwordHash
-        );
+        const valid = await bcrypt.compare(credentials.password, user.passwordHash);
         if (!valid) return null;
 
-        return {
-          id: String(user.id),
-          name: user.name,
-          email: user.email,
-        };
+        return { id: String(user.id), name: user.name, email: user.email };
       },
     }),
   ],
-  pages: {
-    signIn: "/login", // optional: your custom login page path
-  },
-  session: {
-    strategy: "jwt",
-  },
   secret: process.env.NEXTAUTH_SECRET,
+  pages: { signIn: "/login" },
+  session: { strategy: "jwt" },
 };
